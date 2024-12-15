@@ -209,11 +209,12 @@ tourRouter
     .delete(deleteTour);
 
 
-app.use("/api/v1/tours", tourRouter)
+app.use("/api/v1/tours", tourRouter);
 
 //user resource
 
 const userRouter = express.Router();
+
 userRouter
     .route("/")
     .get(getAllUsers)
@@ -225,7 +226,7 @@ userRouter
     .patch(updateUser)
     .delete(deleteUser);
 
-app.use("/api/v1/users", userRouter)
+app.use("/api/v1/users", userRouter);
 
 //Start server
 app.listen(port, () => {
