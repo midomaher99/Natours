@@ -208,8 +208,16 @@
     },
     {
         "id": 9,
-        "name": "Test Tour",
-        "duration": "10",
+        "name": "Patch Tour",
+        "price": "200",
+        "duration": "15",
         "difficulty": "easy"
+    },
+    {
+        "id": 10,
+        "name": "Created tour",
+        "price": "200",
+        "Duration": "15",
+        "Difficulty": "intermediate"
     }
 ]

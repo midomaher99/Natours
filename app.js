@@ -10,14 +10,15 @@ const userRouter = require("./routes/userRoutes");
 const app = express();
 
 //global middlewares
-app.use(morgan("combined"));    //  logging middleware
-app.use(express.json());
-app.use((req, res, next) => {
+app.use(morgan("combined"));    // logging middleware
+app.use(express.json());    // body parser
+
+app.use((req, res, next) => { // test own middleware
     req.requestTime = new Date().toISOString();
     next();
 })
 
-//Routes handlers
+//Routers mounting
 
 app.use("/api/v1/tours", tourRouter);
 app.use("/api/v1/users", userRouter);
