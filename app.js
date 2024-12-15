@@ -10,7 +10,9 @@ const userRouter = require("./routes/userRoutes");
 const app = express();
 
 //global middlewares
-app.use(morgan("dev"));    // logging middleware
+if (process.env.NODE_ENV === "development") {
+    app.use(morgan("dev"));    // logging middleware
+}
 app.use(express.static(`${__dirname}/public`))
 app.use(express.json());    // body parser
 
