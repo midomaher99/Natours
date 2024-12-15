@@ -10,7 +10,8 @@ const userRouter = require("./routes/userRoutes");
 const app = express();
 
 //global middlewares
-app.use(morgan("combined"));    // logging middleware
+app.use(morgan("dev"));    // logging middleware
+app.use(express.static(`${__dirname}/public`))
 app.use(express.json());    // body parser
 
 app.use((req, res, next) => { // test own middleware
