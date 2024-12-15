@@ -194,24 +194,38 @@ const getUser = (req, res) => {
 //Routes handlers
 
 //tours resource
-app.route("/api/v1/tours")
+
+const tourRouter = express.Router();
+
+tourRouter
+    .route("/")
     .get(getAllTours)
     .post(createTour);
 
-app.route("/api/v1/tours/:id")
+tourRouter
+    .route("/:id")
     .get(getTour)
     .patch(updateTour)
     .delete(deleteTour);
 
+
+app.use("/api/v1/tours", tourRouter)
+
 //user resource
-app.route("/api/v1/users")
+
+const userRouter = express.Router();
+userRouter
+    .route("/")
     .get(getAllUsers)
     .post(createUser);
 
-app.route("/api/v1/users/:id")
+userRouter
+    .route("/:id")
     .get(getUser)
     .patch(updateUser)
     .delete(deleteUser);
+
+app.use("/api/v1/users", userRouter)
 
 //Start server
 app.listen(port, () => {
