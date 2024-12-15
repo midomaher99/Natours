@@ -1,18 +1,24 @@
+//import modules
 const express = require('express');
-const fs = require('fs')
+const fs = require('fs');
+const morgan = require('morgan');
 
+//init
 const app = express();
 const port = 3000;
 
 //middlewares
+app.use(morgan("combined"))
 app.use(express.json());
-
+app.use((req, res, next) => {
+    req.requestTime = new Date().toISOString();
+    next();
+})
 //reading tours data in js object
 const toursSimplePath = `${__dirname}/dev-data/data/tours-simple.json`;
-
 const tours = JSON.parse(fs.readFileSync(toursSimplePath));
 
-//Routes callbacks
+//Routes callbacks (tours resource)
 const getAllTours = (req, res) => {
     res
         .status(200)
@@ -122,7 +128,10 @@ const deleteTour = (req, res) => {
                 console.log(err.message)
                 res
                     .status(500)
-                    .send("Server Error");
+                    .json({
+                        status: "fail",
+                        message: "server error"
+                    });
             } else {
                 res
                     .status(204)
@@ -135,8 +144,56 @@ const deleteTour = (req, res) => {
     }
 };
 
+//Routes Callbacks (user resource)
+const getAllUsers = (req, res) => {
+    res
+        .status(500)
+        .json({
+            status: "fail",
+            message: "The route is not yet defined"
+        });
+};
+
+const createUser = (req, res) => {
+    res
+        .status(500)
+        .json({
+            status: "fail",
+            message: "The route is not yet defined"
+        });
+};
+
+const deleteUser = (req, res) => {
+    res
+        .status(500)
+        .json({
+            status: "fail",
+            message: "The route is not yet defined"
+        });
+};
+
+const updateUser = (req, res) => {
+    res
+        .status(500)
+        .json({
+            status: "fail",
+            message: "The route is not yet defined"
+        });
+};
+
+const getUser = (req, res) => {
+    res
+        .status(500)
+        .json({
+            status: "fail",
+            message: "The route is not yet defined"
+        });
+};
+
+
 //Routes handlers
 
+//tours resource
 app.route("/api/v1/tours")
     .get(getAllTours)
     .post(createTour);
@@ -146,7 +203,17 @@ app.route("/api/v1/tours/:id")
     .patch(updateTour)
     .delete(deleteTour);
 
+//user resource
+app.route("/api/v1/users")
+    .get(getAllUsers)
+    .post(createUser);
 
+app.route("/api/v1/users/:id")
+    .get(getUser)
+    .patch(updateUser)
+    .delete(deleteUser);
+
+//Start server
 app.listen(port, () => {
     console.log(`app is running on port:${port}`)
 });
