@@ -7,7 +7,7 @@ const app = require('./app');
 (async () => {
     //connect remote DB
     const DB = process.env.LOCAL_DATABASE;
-    await mongoose.connect(DB, { serverSelectionTimeoutMS: 5000 })
+    mongoose.connect(DB, { serverSelectionTimeoutMS: 5000 })
         .then(() => { console.log("DB Connected") })
         .catch((err) => { console.log(err.message) });
 
