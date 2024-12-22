@@ -16,14 +16,15 @@ if (process.env.NODE_ENV === "development") {
 app.use(express.static(`${__dirname}/public`))
 app.use(express.json());    // body parser
 
-app.use((req, res, next) => { // test own middleware
-    req.requestTime = new Date().toISOString();
-    next();
-})
-
 //Routers mounting
 
 app.use("/api/v1/tours", tourRouter);
 app.use("/api/v1/users", userRouter);
-
+//unhandled routes
+app.all('*', (req, res, next) => {
+    res.status(404).json({
+        status: 'fail',
+        message: `Can't find ${req.originalUrl}`
+    })
+})
 module.exports = app;

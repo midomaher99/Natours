@@ -4,7 +4,8 @@
   "description": "Learning nodejs, express and mongoDB",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon server.js"
+    "start": "nodemon server.js",
+    "debug": "ndb server.js"
   },
   "author": "Mohamed Mostafa Maher",
   "license": "ISC",
@@ -12,6 +13,7 @@
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "mongoose": "^8.9.0",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "validator": "^13.12.0"
   }
 }
