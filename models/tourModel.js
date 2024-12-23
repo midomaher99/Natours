@@ -7,7 +7,7 @@ const tourSchema = new mongoose.Schema(
             unique: true,
             trim: true,
             maxlength: [40, "Tour name can not exceed 40 character."],
-            minlength: [40, "Tour name can not be less than 10 character."]
+            minlength: [10, "Tour name can not be less than 10 character."]
         },
         duration: {
             type: Number,
@@ -83,7 +83,7 @@ tourSchema.virtual("durationWeeks").get(function () {
 //document middleware runs before save command and .create
 tourSchema.pre('save', function () {
     //this here referred to the document to be saved.
-    console.log(this);
+    //console.log(this);
 })
 const tour = mongoose.model("Tour", tourSchema);
 

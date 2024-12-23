@@ -3,17 +3,29 @@ dotEnv.config({ path: `${__dirname}/config.env` }); //must be before requiring a
 const mongoose = require("mongoose");
 const app = require('./app');
 
-//IIFE to await DB connection
-(async () => {
-    //connect remote DB
-    const DB = process.env.LOCAL_DATABASE;
-    mongoose.connect(DB, { serverSelectionTimeoutMS: 5000 })
-        .then(() => { console.log("DB Connected") })
-        .catch((err) => { console.log(err.message) });
 
-    //Start server
-    const port = process.env.PORT * 1;
-    app.listen(port, () => {
-        console.log(`app is running on port:${port}`)
+//connect remote DB
+const DB = process.env.LOCAL_DATABASE;
+mongoose.connect(DB, { serverSelectionTimeoutMS: 5000 })
+    .then(() => { console.log("DB Connected") })
+
+//Start server
+const port = process.env.PORT * 1;
+const server = app.listen(port, () => {
+    console.log(`app is running on port:${port}`)
+});
+
+//handle unhandled rejections 
+process.on('unhandledRejection', (err) => {
+    console.log(err.name, err.message);
+    console.log("Unhandled Rejection");
+    server.close(() => {
+        process.exit(1);
     });
-})();
+});
+
+process.on("uncaughtException", (err) => {
+    console.log(err.name, err.message);
+    console.log("Uncaught Exception");
+    process.exit(1);
+});
