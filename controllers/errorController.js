@@ -15,7 +15,15 @@ const handleValidationErrDB = (err) => {
     const message = `Invalid input data: ${errors.join('. ')}`;
     return new appError(message, 400);
 }
+const handleJWTError = () => {
+    const message = "invalid token, please log in again";
+    return new appError(message, 401);
+}
 
+const handleExpiredToken = () => {
+    const message = "Expired token, please log in again";
+    return new appError(message, 401);
+}
 //production and development errors
 const sendErrorProd = (err, res) => {
     if (err.isOperational) {
@@ -55,7 +63,9 @@ module.exports = (err, req, res, next) => {
         let error = { ...err };
         if (err.name === 'CastError') { error = handleCastErrDB(err); }
         else if (err.code === 11000) { error = handleDupFieldsDB(err, req) }
-        else if (err.errors.name.name === "ValidatorError") { error = handleValidationErrDB(err) }
+        //else if (err.errors.name.name === "ValidatorError") { error = handleValidationErrDB(err) }
+        else if (err.name === "JsonWebTokenError") { error = handleJWTError() }
+        else if (err.name === "TokenExpiredError") { error = handleExpiredToken() }
 
         sendErrorProd(error, res);
     } else if (process.env.NODE_ENV === "development") {

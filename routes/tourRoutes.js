@@ -1,7 +1,7 @@
 const express = require("express");
 const tourController = require("../controllers/tourController");
+const authController = require(`${__dirname}/../controllers/authController`);
 const router = express.Router();
-
 
 
 //routes handler
@@ -17,7 +17,7 @@ router
 
 router
     .route("/")
-    .get(tourController.getAllTours)
+    .get(authController.isLoggedIn, tourController.getAllTours)
     .post(tourController.createTour);
 
 router
