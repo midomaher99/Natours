@@ -1,3 +1,4 @@
+const crypto = require("crypto");
 const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcryptjs");
@@ -23,6 +24,14 @@ const userSchema = new mongoose.Schema({
     photo: {
         type: String
     },
+    role: {
+        type: String,
+        enum: {
+            values: ['admin', 'user', 'guide', 'lead-guide'],
+            message: "invalid role"
+        },
+        default: "user"
+    },
     password: {
         type: String,
         required: [true, "please provide a password"],
@@ -40,15 +49,20 @@ const userSchema = new mongoose.Schema({
             message: "Passwords are not the same."
         }
     },
-    passwordChangedAt: Date
+    passwordChangedAt: Date,
+    passwordResetToken: String,
+    passwordResetTokenExpire: Date
 });
 
+//password manipulation middleware
 userSchema.pre('save', async function (next) {
     if (!this.isModified('password')) {
         //do nothing   
     } else {
         this.password = await bcrypt.hash(this.password, 10);
         this.passwordConfirm = undefined;
+        this.passwordChangedAt = Date.now() - 2000; //2 secondes after to grantee thar changePasswordAt is before generating the JWT
+
     }
     next()
 })
@@ -62,6 +76,13 @@ userSchema.methods.changedPasswordAfter = (iat) => {
         return iat < changeTime;
     }
     return false;
+}
+
+userSchema.methods.createPasswordResetToken = function () {
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    this.passwordResetToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+    this.passwordResetTokenExpire = Date.now() + (10 * 60 * 1000); //10 minutes
+    return resetToken;
 }
 const User = mongoose.model('User', userSchema);
 module.exports = User;

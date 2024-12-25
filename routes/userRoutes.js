@@ -5,6 +5,8 @@ const authController = require(`${__dirname}/../controllers/authController`);
 
 router.post("/signup", authController.signup);
 router.post("/signin", authController.signin);
+router.patch("/reset-password/:token", authController.resetPassword);
+router.post("/forgot-password", authController.forgotPassword);
 
 router
     .route("/")
