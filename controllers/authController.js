@@ -149,3 +149,44 @@ module.exports.resetPassword = catchAsync(async (req, res, next) => {
             token
         })
 })
+
+module.exports.updatePassword = catchAsync(async (req, res, next) => {
+    //expected req.body 
+    //old password
+    //new password
+    //confirm password
+    //header token
+
+    //check JWT
+    //is done on the last middle ware (isLoggedIn)
+    if (!req.user) {
+        return next(new appError("Invalid token", 400));
+    }
+    //leak if body data
+    if (!req.body.oldPassword || !req.body.newPassword || !req.body.passwordConfirm) {
+        return next(new appError("you must give oldPassword, newPassword and password confirm", 400));
+    }
+    //get password from db
+    let user = await User.findById(req.user._id).select('+password');
+    //authenticate the user
+    const correct = await user.isCorrectPassword(req.body.oldPassword, user.password);
+    if (!correct) {
+        return next(new appError("Invalid password.", 401));
+    }
+
+    //update password
+    //passwords comparison is done in schema validator
+    user.password = req.body.newPassword;
+    user.passwordConfirm = req.body.passwordConfirm;
+    //update passwordChangedAt is done in mongoose middleware
+    await user.save();
+    //generate jwt
+    const token = signToken(user._id)
+    //send response
+    res.status(200).
+        json({
+            status: "success",
+            token
+        })
+
+});
