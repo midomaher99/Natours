@@ -51,7 +51,12 @@ const userSchema = new mongoose.Schema({
     },
     passwordChangedAt: Date,
     passwordResetToken: String,
-    passwordResetTokenExpire: Date
+    passwordResetTokenExpire: Date,
+    active: {
+        type: Boolean,
+        default: true,
+        select: false
+    }
 });
 
 //password manipulation middleware
@@ -66,6 +71,11 @@ userSchema.pre('save', async function (next) {
     }
     next()
 })
+
+userSchema.pre(/^find/, function (next) {
+    this.find({ active: { $ne: false } });
+    next();
+});
 
 userSchema.methods.isCorrectPassword = async function (candidatePassword, userPassword) {
     return await bcrypt.compare(candidatePassword, userPassword);

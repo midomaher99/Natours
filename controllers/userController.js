@@ -10,14 +10,16 @@ const filterObj = (obj, ...allowedFields) => {
 }
 
 //Routes Callbacks (user resource)
-module.exports.getAllUsers = (req, res) => {
+module.exports.getAllUsers = catchAsync(async (req, res, next) => {
+    const users = await User.find();
     res
-        .status(500)
+        .status(200)
         .json({
-            status: "fail",
-            message: "The route is not yet defined"
+            status: "success",
+            results: users.length,
+            data: { users }
         });
-};
+});
 
 module.exports.createUser = (req, res) => {
     res
@@ -66,5 +68,14 @@ exports.updateMe = catchAsync(async (req, res, next) => {
         .json({
             status: "success",
             user: updatedUser
+        })
+});
+
+exports.deleteMe = catchAsync(async (req, res, next) => {
+    const updatedUser = await User.findByIdAndUpdate(req.user.id, { active: false });
+    res
+        .status(204)
+        .json({
+            status: "success"
         })
 });
