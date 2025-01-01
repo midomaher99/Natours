@@ -1,13 +1,15 @@
 const express = require("express");
-const userController = require("../controllers/userController")
-const router = express.Router();
+const userController = require(`${__dirname}/../controllers/userController`)
 const authController = require(`${__dirname}/../controllers/authController`);
+
+const router = express.Router();
 
 router.post("/signup", authController.signup);
 router.post("/signin", authController.signin);
 router.patch("/reset-password/:token", authController.resetPassword);
 router.post("/forgot-password", authController.forgotPassword);
 router.patch("/update-password", authController.isLoggedIn, authController.updatePassword);
+router.patch("/update-me", authController.isLoggedIn, userController.updateMe);
 
 router
     .route("/")
