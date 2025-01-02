@@ -1,6 +1,11 @@
 //import modules
 const express = require('express');
 const morgan = require('morgan');
+const rateLimit = require('express-rate-limit');
+const helmet = require('helmet');
+const mongoSanitizer = require('express-mongo-sanitize');
+const xss = require('xss-clean');
+const hpp = require('hpp');
 const globalErrorhandler = require(`${__dirname}/controllers/errorController`);
 const appError = require(`${__dirname}/utils/appError`);
 
@@ -12,11 +17,27 @@ const userRouter = require("./routes/userRoutes");
 const app = express();
 
 //global middlewares
+
+app.use(helmet());
+
 if (process.env.NODE_ENV === "development") {
     app.use(morgan("dev"));    // logging middleware
 }
-app.use(express.static(`${__dirname}/public`))
-app.use(express.json());    // body parser
+
+const limiter = rateLimit({
+    max: 100,
+    windowMs: 60 * 60 * 1000,
+    message: "Too many request from this IP, please try again in an hour"
+})
+app.use('/api', limiter);
+
+app.use(mongoSanitizer());
+app.use(xss());
+app.use(hpp({
+    whitelist: ['duration']
+}))
+app.use(express.static(`${__dirname}/public`));
+app.use(express.json({ limit: '10kb' }));    // body parser
 
 //Routers mounting
 

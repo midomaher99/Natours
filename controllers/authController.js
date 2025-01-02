@@ -22,6 +22,7 @@ const createSendToken = (user, statusCode, res) => {
     res
         .status(statusCode)
         .json({
+            token,
             data: {
                 user
             }
