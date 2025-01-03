@@ -68,7 +68,36 @@ const tourSchema = new mongoose.Schema(
             type: Date,
             default: Date.now()
         },
-        startDates: [Date]
+        startDates: [Date],
+        startLocation: {
+            type: {
+                type: String,
+                enum: ['Point'],
+                default: 'Point'
+            },
+            coordinates: [Number],
+            address: String,
+            description: String
+        },
+        locations: [
+            {
+                type: {
+                    type: String,
+                    enum: ['Point'],
+                    default: 'Point'
+                },
+                coordinates: [Number],
+                address: String,
+                description: String,
+                day: Number
+            }
+        ],
+        guides: [
+            {
+                type: mongoose.Schema.ObjectId,
+                ref: 'User'
+            }
+        ]
     },
     {
         toJSON: { virtuals: true },
@@ -85,6 +114,11 @@ tourSchema.pre('save', function () {
     //this here referred to the document to be saved.
     //console.log(this);
 })
+
+tourSchema.pre(["find", "findOne"], function (next) {
+    this.populate({ path: 'guides', select: "-passwordChangedAt -__v" });
+    next();
+});
 const tour = mongoose.model("Tour", tourSchema);
 
 module.exports = tour;
