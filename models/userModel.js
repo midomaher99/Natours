@@ -64,7 +64,7 @@ userSchema.pre('save', async function (next) {
     if (!this.isModified('password')) {
         //do nothing   
     } else {
-        this.password = await bcrypt.hash(this.password, 10);
+        this.password = await bcrypt.hash(this.password, 12);
         this.passwordConfirm = undefined;
         this.passwordChangedAt = Date.now() - 2000; //2 secondes after to grantee thar changePasswordAt is before generating the JWT
 
