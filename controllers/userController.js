@@ -1,6 +1,8 @@
 const appError = require(`${__dirname}/../utils/appError`)
 const User = require(`${__dirname}/../models/userModel`)
 const catchAsync = require(`${__dirname}/../utils/catchAsync`)
+const factory = require(`${__dirname}/handlerFactory`)
+
 const filterObj = (obj, ...allowedFields) => {
     const newObj = {};
     Object.keys(obj).forEach(el => {
@@ -30,32 +32,14 @@ module.exports.createUser = (req, res) => {
         });
 };
 
-module.exports.deleteUser = (req, res) => {
-    res
-        .status(500)
-        .json({
-            status: "fail",
-            message: "The route is not yet defined"
-        });
-};
+module.exports.deleteUser = factory.deleteOne(User);
+module.exports.updateUser = factory.updateOne(User);
+module.exports.getUser = factory.getOne(User);
 
-module.exports.updateUser = (req, res) => {
-    res
-        .status(500)
-        .json({
-            status: "fail",
-            message: "The route is not yet defined"
-        });
-};
-
-module.exports.getUser = (req, res) => {
-    res
-        .status(500)
-        .json({
-            status: "fail",
-            message: "The route is not yet defined"
-        });
-};
+module.exports.getMe = (req, res, next) => {
+    req.params.id = req.user.id;
+    next();
+}
 
 exports.updateMe = catchAsync(async (req, res, next) => {
     if (req.body.password || req.body.passwordConfirm) {

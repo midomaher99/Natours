@@ -9,8 +9,10 @@ router.post("/signin", authController.signin);
 router.patch("/reset-password/:token", authController.resetPassword);
 router.post("/forgot-password", authController.forgotPassword);
 router.patch("/update-password", authController.isLoggedIn, authController.updatePassword);
-router.patch("/update-me", authController.isLoggedIn, userController.updateMe);
-router.delete("/delete-me", authController.isLoggedIn, userController.deleteMe);
+router.route("/me")
+    .patch(authController.isLoggedIn, userController.updateMe)
+    .delete(authController.isLoggedIn, userController.deleteMe)
+    .get(authController.isLoggedIn, userController.getMe, userController.getUser);
 
 router
     .route("/")

@@ -1,5 +1,7 @@
-const Review = require(`${__dirname}/../models/reviewModel`)
-const catchAsync = require(`${__dirname}/../utils/catchAsync`)
+const Review = require(`${__dirname}/../models/reviewModel`);
+const catchAsync = require(`${__dirname}/../utils/catchAsync`);
+const factory = require(`${__dirname}/handlerFactory`);
+
 
 module.exports.getAll = catchAsync(async (req, res, next) => {
     //handle nested routes
@@ -30,3 +32,6 @@ module.exports.create = catchAsync(async (req, res, next) => {
             }
         )
 });
+
+module.exports.deleteReview = factory.deleteOne(Review);
+module.exports.updateReview = factory.updateOne(Review);
