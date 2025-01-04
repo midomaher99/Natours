@@ -10,9 +10,9 @@ const globalErrorhandler = require(`${__dirname}/controllers/errorController`);
 const appError = require(`${__dirname}/utils/appError`);
 
 //import routers
-const tourRouter = require("./routes/tourRoutes");
-const userRouter = require("./routes/userRoutes");
-
+const tourRouter = require(`${__dirname}/routes/tourRoutes`);
+const userRouter = require(`${__dirname}/routes/userRoutes`);
+const reviewRouter = require(`${__dirname}/routes/reviewRouter`)
 //init
 const app = express();
 
@@ -43,6 +43,7 @@ app.use(express.json({ limit: '10kb' }));    // body parser
 
 app.use("/api/v1/tours", tourRouter);
 app.use("/api/v1/users", userRouter);
+app.use("/api/v1/reviews", reviewRouter)
 //unhandled routes
 app.all('*', (req, res, next) => {
     next(new appError(`Can't find ${req.originalUrl}`, 404));

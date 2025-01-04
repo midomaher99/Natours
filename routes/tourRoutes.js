@@ -1,10 +1,13 @@
 const express = require("express");
-const tourController = require("../controllers/tourController");
+const tourController = require(`${__dirname}/../controllers/tourController`);
 const authController = require(`${__dirname}/../controllers/authController`);
+const reviewRouter = require(`${__dirname}/reviewRouter`);
 const router = express.Router();
 
 
 //routes handler
+router.use('/:tourId/reviews', reviewRouter);
+
 router
     .route("/stats")
     .get(tourController.getTourStats);
