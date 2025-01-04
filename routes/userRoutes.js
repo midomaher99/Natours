@@ -8,11 +8,16 @@ router.post("/signup", authController.signup);
 router.post("/signin", authController.signin);
 router.patch("/reset-password/:token", authController.resetPassword);
 router.post("/forgot-password", authController.forgotPassword);
-router.patch("/update-password", authController.isLoggedIn, authController.updatePassword);
+
+router.use(authController.isLoggedIn)
+
+router.patch("/update-password", authController.updatePassword);
 router.route("/me")
-    .patch(authController.isLoggedIn, userController.updateMe)
-    .delete(authController.isLoggedIn, userController.deleteMe)
-    .get(authController.isLoggedIn, userController.getMe, userController.getUser);
+    .patch(userController.updateMe)
+    .delete(userController.deleteMe)
+    .get(userController.getMe, userController.getUser);
+
+router.use(authController.restrictedTo('admin'))
 
 router
     .route("/")

@@ -9,14 +9,16 @@ const router = express.Router({ mergeParams: true });
  * url/tours/:tourId/reviews
  */
 
+router.use(authController.isLoggedIn);
+
 router
     .route("/")
     .get(reviewController.getAll)
-    .post(authController.isLoggedIn, authController.restrictedTo('user'), reviewController.create);
+    .post(reviewController.create);
 
 router
     .route("/:id")
-    .delete(reviewController.deleteReview)
-    .patch(reviewController.updateReview);
+    .delete(authController.restrictedTo('user', 'admin'), reviewController.deleteReview)
+    .patch(authController.restrictedTo('user', 'admin'), reviewController.updateReview);
 
 module.exports = router;

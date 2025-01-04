@@ -10,23 +10,23 @@ router.use('/:tourId/reviews', reviewRouter);
 
 router
     .route("/stats")
-    .get(tourController.getTourStats);
+    .get(authController.isLoggedIn, authController.restrictedTo('admin', 'lead-guide'), tourController.getTourStats);
 router
     .route("/monthly-plan/:year")
-    .get(tourController.getMonthlyPlan)
+    .get(authController.isLoggedIn, authController.restrictedTo('admin', 'lead-guide'), tourController.getMonthlyPlan)
 router
     .route("/top-5-cheapest")
     .get(tourController.aliasTopFiveCheapest, tourController.getAllTours);
 
 router
     .route("/")
-    .get(authController.isLoggedIn, tourController.getAllTours)
-    .post(tourController.createTour);
+    .get(tourController.getAllTours)
+    .post(authController.isLoggedIn, authController.restrictedTo('admin', 'lead-guide'), tourController.createTour);
 
 router
     .route("/:id")
     .get(tourController.getTour)
-    .patch(tourController.updateTour)
+    .patch(authController.isLoggedIn, authController.restrictedTo('admin', 'lead-guide'), tourController.updateTour)
     .delete(authController.isLoggedIn, authController.restrictedTo('admin', 'lead-guide'), tourController.deleteTour);
 
 module.exports = router;
