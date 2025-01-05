@@ -33,7 +33,7 @@ const reviewSchema = new mongoose.Schema(
         toJSON: { virtuals: true }
     }
 )
-reviewSchema.index({ tour: 1 });
+reviewSchema.index({ tour: 1, user: 1 }, { unique: true });//the combination of tour and user is unique
 
 reviewSchema.pre(['find', 'findOne'], function (next) {
     this.populate({ path: 'user', select: 'name' });
@@ -53,14 +53,30 @@ reviewSchema.statics.calcAvgRating = async function (tourId) {
             }
         }
     ]);
-    await Tour.findByIdAndUpdate(tourId, {
-        ratingsAverage: stats[0].avgRatings,
-        ratingsQuantity: stats[0].numRatings
-    });
+    if (stats.length > 0) {
+        await Tour.findByIdAndUpdate(tourId, {
+            ratingsAverage: stats[0].avgRatings,
+            ratingsQuantity: stats[0].numRatings
+        });
+    } else {
+        await Tour.findByIdAndUpdate(tourId, {
+            ratingsAverage: 4.5,
+            ratingsQuantity: 0
+        })
+    }
 };
-
+//calc avg and quantity for new reviews
 reviewSchema.post('save', function () {
     this.constructor.calcAvgRating(this.tour)
 });
+//calc avg and quantity when update or delete a review
+reviewSchema.pre(['findOneAndDelete', 'findOneAndReplace', 'findOneAndUpdate'], async function (next) {
+    const review = await this.model.findOne(this.getQuery());
+    this.rev = review;
+    next()
+})
+reviewSchema.post(['findOneAndDelete', 'findOneAndReplace', 'findOneAndUpdate'], function (next) {
+    this.rev.constructor.calcAvgRating(this.rev.tour);
+})
 const Review = new mongoose.model('Review', reviewSchema);
 module.exports = Review;
