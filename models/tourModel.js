@@ -105,6 +105,7 @@ const tourSchema = new mongoose.Schema(
         toObject: { virtuals: true }
     }
 );
+tourSchema.index({ startLocation: '2dsphere' });
 //define virtual property 
 tourSchema.virtual("durationWeeks").get(function () {
     return this.duration / 7;
