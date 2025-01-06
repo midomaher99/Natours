@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const slugify = require('slugify');
 const tourSchema = new mongoose.Schema(
     {
         name: {
@@ -8,6 +9,10 @@ const tourSchema = new mongoose.Schema(
             trim: true,
             maxlength: [40, "Tour name can not exceed 40 character."],
             minlength: [10, "Tour name can not be less than 10 character."]
+        },
+        slug: {
+            type: String,
+            unique: true
         },
         duration: {
             type: Number,
@@ -106,6 +111,7 @@ const tourSchema = new mongoose.Schema(
     }
 );
 tourSchema.index({ startLocation: '2dsphere' });
+tourSchema.index({ slug: 1 });
 //define virtual property 
 tourSchema.virtual("durationWeeks").get(function () {
     return this.duration / 7;
@@ -118,9 +124,11 @@ tourSchema.virtual("reviews", {
 
 //Mongoose middlewares
 //document middleware runs before save command and .create
-tourSchema.pre('save', function () {
+tourSchema.pre('save', function (next) {
     //this here referred to the document to be saved.
-    //console.log(this);
+    this.slug = slugify(this.name, { lower: true });
+    next();
+
 })
 
 tourSchema.pre(["find", "findOne"], function (next) {

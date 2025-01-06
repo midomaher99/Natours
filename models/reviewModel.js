@@ -36,7 +36,7 @@ const reviewSchema = new mongoose.Schema(
 reviewSchema.index({ tour: 1, user: 1 }, { unique: true });//the combination of tour and user is unique
 
 reviewSchema.pre(['find', 'findOne'], function (next) {
-    this.populate({ path: 'user', select: 'name' });
+    this.populate({ path: 'user', select: 'name photo' });
     next();
 })
 //define static method to calc avg rating and update the tour

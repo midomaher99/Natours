@@ -1,4 +1,5 @@
 //import modules
+const path = require('path')
 const express = require('express');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
@@ -6,17 +7,22 @@ const helmet = require('helmet');
 const mongoSanitizer = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
+const { title } = require('process');
 const globalErrorhandler = require(`${__dirname}/controllers/errorController`);
 const appError = require(`${__dirname}/utils/appError`);
 
 //import routers
 const tourRouter = require(`${__dirname}/routes/tourRoutes`);
 const userRouter = require(`${__dirname}/routes/userRoutes`);
-const reviewRouter = require(`${__dirname}/routes/reviewRouter`)
+const reviewRouter = require(`${__dirname}/routes/reviewRouter`);
+const viewRouter = require(`${__dirname}/routes/viewRouter`);
 //init
 const app = express();
 
+app.set('view engine', 'pug');
+app.set('views', path.join(__dirname, 'views'));
 //global middlewares
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(helmet());
 
@@ -36,18 +42,18 @@ app.use(xss());
 app.use(hpp({
     whitelist: ['duration']
 }))
-app.use(express.static(`${__dirname}/public`));
 app.use(express.json({ limit: '10kb' }));    // body parser
 
 //Routers mounting
-
+app.use('/', viewRouter);
 app.use("/api/v1/tours", tourRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/reviews", reviewRouter)
+
 //unhandled routes
 app.all('*', (req, res, next) => {
     next(new appError(`Can't find ${req.originalUrl}`, 404));
 });
-
+//error handler
 app.use(globalErrorhandler);
 module.exports = app;
