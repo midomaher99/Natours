@@ -44,11 +44,8 @@ app.use(hpp({
     whitelist: ['duration']
 }))
 app.use(express.json({ limit: '10kb' }));    // body parser
-app.use(cookieParser());    // body parser
-app.use((req, res, next) => {
-    console.log(req.cookies)
-    next();
-})
+app.use(cookieParser());
+
 app.use(
     helmet.contentSecurityPolicy({
         directives: {

@@ -40,26 +40,29 @@ module.exports.getLoginForm = (req, res, next) => {
         })
 }
 
-module.exports.isLoggedIn = catchAsync(async (req, res, next) => {
+module.exports.isLoggedIn = async (req, res, next) => {
+    try {
+        //check token existence 
+        let token;
+        if (req.cookies.jwt) {
+            token = req.cookies.jwt;
+            //verify the token
+            const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
 
-    //check token existence 
-    let token;
-    if (req.cookies.jwt) {
-        token = req.cookies.jwt;
-        //verify the token
-        const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+            // check the user existence
+            const currentUser = await User.findById(decoded.id);
+            if (!currentUser) {
+                return next();
+            }
 
-        // check the user existence
-        const currentUser = await User.findById(decoded.id);
-        if (!currentUser) {
-            return next();
+            //check if password changed
+            if (currentUser.changedPasswordAfter(decoded.iat)) {
+                return next();
+            }
+            res.locals.user = currentUser;
+            return next()
         }
-
-        //check if password changed
-        if (currentUser.changedPasswordAfter(decoded.iat)) {
-            return next();
-        }
-        res.locals.user = currentUser;
+    } catch (err) {
+        next();
     }
-    next();
-});
+};

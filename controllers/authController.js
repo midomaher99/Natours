@@ -60,7 +60,18 @@ module.exports.signin = catchAsync(async (req, res, next) => {
     }
     createSendToken(user, 200, res);
 });
-
+module.exports.signout = (req, res, next) => {
+    const cookieOptions = {
+        expires: new Date(Date.now()),
+        httpOnly: true
+    };
+    res.cookie('jwt', 'loggedOut', cookieOptions);
+    res
+        .status(200)
+        .json({
+            status: 'success'
+        })
+}
 module.exports.isLoggedIn = catchAsync(async (req, res, next) => {
 
     //check token existence 
