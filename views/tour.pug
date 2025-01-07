@@ -1,4 +1,7 @@
 extends base
+
+//- block append head
+
 mixin reviewCard(review)
   .reviews__card
     .reviews__avatar
@@ -74,7 +77,7 @@ block content
         img.picture-box__img(src=`/img/tours/${img}`, alt=`${tour.name}`)
 
   section.section-map
-    #map
+    #map(data-locations=`${JSON.stringify(tour.locations)}`)
 
   section.section-reviews
     .reviews

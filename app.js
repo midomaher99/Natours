@@ -8,6 +8,7 @@ const mongoSanitizer = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
 const { title } = require('process');
+const cookieParser = require('cookie-parser');
 const globalErrorhandler = require(`${__dirname}/controllers/errorController`);
 const appError = require(`${__dirname}/utils/appError`);
 
@@ -43,6 +44,19 @@ app.use(hpp({
     whitelist: ['duration']
 }))
 app.use(express.json({ limit: '10kb' }));    // body parser
+app.use(cookieParser());    // body parser
+app.use((req, res, next) => {
+    console.log(req.cookies)
+    next();
+})
+app.use(
+    helmet.contentSecurityPolicy({
+        directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: ["'self'", "https://cdn.jsdelivr.net"],
+        },
+    })
+);
 
 //Routers mounting
 app.use('/', viewRouter);
