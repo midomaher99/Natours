@@ -25,7 +25,7 @@ const handleExpiredToken = () => {
     return new appError(message, 401);
 }
 //production and development errors
-const sendErrorProd = (err, res) => {
+const sendErrorProd = (err, req, res) => {
     if (err.isOperational) {
         res
             .status(err.statusCode)
@@ -42,15 +42,22 @@ const sendErrorProd = (err, res) => {
             });
     }
 }
-const sendErrorDev = (err, res) => {
-    res
-        .status(err.statusCode)
-        .json({
-            status: err.status,
-            error: err,
-            stack: err.stack,
-            message: err.message
-        });
+const sendErrorDev = (err, req, res) => {
+    if (req.originalUrl.startsWith('/api')) {
+        res
+            .status(err.statusCode)
+            .json({
+                status: err.status,
+                error: err,
+                stack: err.stack,
+                message: err.message
+            });
+    } else {
+        res.status(err.statusCode).render('error', {
+            title: 'Something went wrong!',
+            msg: err.message
+        })
+    }
 }
 
 //express error handler middleware
@@ -67,9 +74,9 @@ module.exports = (err, req, res, next) => {
         else if (err.name === "JsonWebTokenError") { error = handleJWTError() }
         else if (err.name === "TokenExpiredError") { error = handleExpiredToken() }
 
-        sendErrorProd(error, res);
+        sendErrorProd(error, req, res);
     } else if (process.env.NODE_ENV === "development") {
-        sendErrorDev(err, res);
+        sendErrorDev(err, req, res);
     }
 
 }
