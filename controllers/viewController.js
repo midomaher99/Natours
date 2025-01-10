@@ -5,6 +5,8 @@ const jwt = require("jsonwebtoken");
 const User = require(`${__dirname}/../models/userModel`);
 
 const { promisify } = require('util');
+const { render } = require("../app");
+const { title } = require("process");
 module.exports.getOverview = catchAsync(async (req, res, next) => {
     //get tours
     const tours = await Tour.find();
@@ -67,3 +69,13 @@ module.exports.isLoggedIn = async (req, res, next) => {
         return next();
     }
 };
+
+module.exports.getAccount = (req, res, next) => {
+
+    res
+        .status(200)
+        .render('account', {
+            title: 'Your account',
+            user: req.user
+        })
+}
