@@ -45,6 +45,7 @@ app.use(hpp({
 }))
 app.use(express.json({ limit: '10kb' }));    // body parser
 app.use(cookieParser());
+app.use(express.urlencoded({ extended: true, limit: '10kb' }))
 
 app.use(
     helmet.contentSecurityPolicy({
