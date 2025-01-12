@@ -30,16 +30,16 @@ const filterObj = (obj, ...allowedFields) => {
 //Routes Callbacks (user resource)
 module.exports.uploadUserPhoto = upload.single('photo');
 
-module.exports.resizeUserPhoto = (req, res, next) => {
+module.exports.resizeUserPhoto = catchAsync(async (req, res, next) => {
     if (!req.file) return next();
     req.file.filename = `user-${req.user.id}-${Date.now()}.jpeg`;
-    sharp(req.file.buffer)
+    await sharp(req.file.buffer)
         .resize(500, 500)
         .toFormat('jpeg')
         .jpeg({ quality: 90 })
         .toFile(`public/img/users/${req.file.filename}`);
     next();
-}
+})
 module.exports.getAllUsers = catchAsync(async (req, res, next) => {
     const users = await User.find();
     res
