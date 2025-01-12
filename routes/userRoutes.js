@@ -4,6 +4,8 @@ const authController = require(`${__dirname}/../controllers/authController`);
 
 const router = express.Router();
 
+
+
 router.post("/signup", authController.signup);
 router.post("/signin", authController.signin);
 router.get("/signout", authController.signout);
@@ -14,7 +16,7 @@ router.use(authController.isLoggedIn)
 
 router.patch("/update-password", authController.updatePassword);
 router.route("/me")
-    .patch(userController.updateMe)
+    .patch(userController.uploadUserPhoto, userController.resizeUserPhoto, userController.updateMe)
     .delete(userController.deleteMe)
     .get(userController.getMe, userController.getUser);
 
