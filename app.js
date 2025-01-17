@@ -17,6 +17,7 @@ const tourRouter = require(`${__dirname}/routes/tourRoutes`);
 const userRouter = require(`${__dirname}/routes/userRoutes`);
 const reviewRouter = require(`${__dirname}/routes/reviewRouter`);
 const viewRouter = require(`${__dirname}/routes/viewRouter`);
+const bookingRouter = require(`${__dirname}/routes/bookingRouter`);
 //init
 const app = express();
 
@@ -25,7 +26,7 @@ app.set('views', path.join(__dirname, 'views'));
 //global middlewares
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use(helmet());
+// app.use(helmet());
 
 if (process.env.NODE_ENV === "development") {
     app.use(morgan("dev"));    // logging middleware
@@ -47,20 +48,14 @@ app.use(express.json({ limit: '10kb' }));    // body parser
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true, limit: '10kb' }))
 
-app.use(
-    helmet.contentSecurityPolicy({
-        directives: {
-            defaultSrc: ["'self'"],
-            scriptSrc: ["'self'", "https://cdn.jsdelivr.net"],
-        },
-    })
-);
+
 
 //Routers mounting
 app.use('/', viewRouter);
 app.use("/api/v1/tours", tourRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/reviews", reviewRouter)
+app.use("/api/v1/booking", bookingRouter)
 
 //unhandled routes
 app.all('*', (req, res, next) => {

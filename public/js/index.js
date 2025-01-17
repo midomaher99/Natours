@@ -1,10 +1,11 @@
 import { login, logout } from './login'
 import { updateSettings } from './updateSettings';
-
+import { bookTour } from './stripe';
 const loginForm = document.querySelector('.form--login');
 const logoutBtn = document.querySelector('.nav__el--logout');
 const userDataForm = document.querySelector('.form-user-data');
 const passwordChangeForm = document.querySelector('.form-user-settings');
+const bookBtn = document.getElementById('book-tour');
 
 if (loginForm) {
     loginForm.addEventListener('submit', event => {
@@ -38,4 +39,11 @@ if (passwordChangeForm) {
 }
 if (logoutBtn) {
     logoutBtn.addEventListener('click', logout)
+}
+if (bookBtn) {
+    bookBtn.addEventListener('click', async event => {
+        event.target.textContent = 'Processing...'
+        const tourId = event.target.dataset.tourId;
+        await bookTour(tourId);
+    })
 }
