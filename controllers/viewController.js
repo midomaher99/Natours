@@ -3,6 +3,7 @@ const catchAsync = require(`${__dirname}/../utils/catchAsync`)
 const appError = require(`${__dirname}/../utils/appError`)
 const jwt = require("jsonwebtoken");
 const User = require(`${__dirname}/../models/userModel`);
+const Booking = require(`${__dirname}/../models/bookingModel`);
 
 const { promisify } = require('util');
 const { render } = require("../app");
@@ -94,5 +95,20 @@ module.exports.updateUserData = catchAsync(async (req, res, next) => {
     res.status(200).render('account', {
         title: 'YourAccount',
         user
+    })
+});
+
+module.exports.getMyTours = catchAsync(async (req, res, next) => {
+    //get booking of the user
+    const bookings = await Booking.find({ user: req.user.id })
+    const tourIds = bookings.map(el => el.tour)
+    // const tours = tourIds.map(async id => await Tour.findById(id))
+    // await Promise.all()
+    const tours = await Tour.find({ _id: { $in: tourIds } });
+    //render the page
+    res.status(200).render('overview', {
+        title: 'My Bookings',
+        tours,
+        user: req.user
     })
 })
