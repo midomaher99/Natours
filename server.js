@@ -17,15 +17,15 @@ const server = app.listen(port, () => {
 
 //handle unhandled rejections
 process.on('unhandledRejection', (err) => {
-    console.log(err.name, err.message);
-    console.log("Unhandled Rejection");
+    // console.log(err.name, err.message);
+    // console.log("Unhandled Rejection");
     server.close(() => {
         process.exit(1);
     });
 });
 
 process.on("uncaughtException", (err) => {
-    console.log(err.name, err.message);
-    console.log("Uncaught Exception");
+    // console.log(err.name, err.message);
+    // console.log("Uncaught Exception");
     process.exit(1);
 });
