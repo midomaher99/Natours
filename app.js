@@ -1,5 +1,5 @@
 //import modules
-const path = require('path')
+const path = require('path');
 const express = require('express');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
@@ -9,7 +9,8 @@ const xss = require('xss-clean');
 const hpp = require('hpp');
 const { title } = require('process');
 const cookieParser = require('cookie-parser');
-const compression = require('compression')
+const compression = require('compression');
+const cors = require('cors');
 const globalErrorhandler = require(`${__dirname}/controllers/errorController`);
 const appError = require(`${__dirname}/utils/appError`);
 
@@ -22,8 +23,14 @@ const bookingRouter = require(`${__dirname}/routes/bookingRouter`);
 //init
 const app = express();
 
+//Server-Side rendering using pug
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
+
+//implementing CORS
+app.use(cors());
+app.options('*', cors());
+
 //global middlewares
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(compression())
