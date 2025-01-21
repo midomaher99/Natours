@@ -5,7 +5,8 @@ const app = require('./app');
 
 
 //connect remote DB
-const DB = process.env.LOCAL_DATABASE;
+let DB = (process.env.NODE_ENV === 'development') ? process.env.LOCAL_DATABASE : process.env.DATABASE;
+
 mongoose.connect(DB, { serverSelectionTimeoutMS: 5000 })
     .then(() => { console.log("DB Connected") })
 
@@ -29,3 +30,11 @@ process.on("uncaughtException", (err) => {
     // console.log("Uncaught Exception");
     process.exit(1);
 });
+
+process.on('SIGTERM', () => {
+    console.log('SIGTERM Received!')
+    //handle current requests then close
+    server.close(() => {
+        console.log('Terminated')
+    })
+})

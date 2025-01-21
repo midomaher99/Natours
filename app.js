@@ -9,6 +9,7 @@ const xss = require('xss-clean');
 const hpp = require('hpp');
 const { title } = require('process');
 const cookieParser = require('cookie-parser');
+const compression = require('compression')
 const globalErrorhandler = require(`${__dirname}/controllers/errorController`);
 const appError = require(`${__dirname}/utils/appError`);
 
@@ -25,7 +26,7 @@ app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 //global middlewares
 app.use(express.static(path.join(__dirname, 'public')));
-
+app.use(compression())
 // app.use(helmet());
 
 if (process.env.NODE_ENV === "development") {
