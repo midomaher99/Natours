@@ -1,6 +1,6 @@
-<div style="text-align:center">
+<h1 align="center">
   <img src="./public/img/logo-green.png" alt="Natours" />
-</div>
+</h1>
 <h4 align="center">Demo tours booking website built on top of <a href="https://nodejs.org/en/" target="_blank">NodeJS</a>.</h4>
 
 ## Key Features 📝
